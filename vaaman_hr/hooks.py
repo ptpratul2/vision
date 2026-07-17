@@ -69,7 +69,7 @@ app_license = "mit"
 # ------------
 
 # before_install = "vaaman_hr.install.before_install"
-# after_install = "vaaman_hr.install.after_install"
+after_install = "vaaman_hr.vaaman_hr.setup.install.after_install"
 before_app_install = "vaaman_hr.vaaman_hr.patches.apply_monkey_patch"
 after_migrate = [
     "vaaman_hr.vaaman_hr.update_field_options.update_earned_leave_frequency_options",
@@ -313,9 +313,14 @@ scheduler_events = {
 
 #custom_field_add
 fixtures = [
-    {"dt":"Custom Field","filter":[["module","=","Vaaman Hr"]]},
-    # {"dt":"Property Setter","filter":[["module","=","Vaaman Hr"]]}
-    
+    {"dt":"Custom Field","filters":[["module","=","Vaaman Hr"]]},
+    {"dt":"Property Setter","filters":[["module","=","Vaaman Hr"]]},
+    {"dt":"Client Script","filters":[["module","=","Vaaman Hr"]]},
+    {"dt":"Server Script","filters":[["module","=","Vaaman Hr"]]},
+    {"dt":"Workflow","filters":[["module","=","Vaaman Hr"]]},
+    {"dt":"Workflow State","filters":[["module","=","Vaaman Hr"]]},
+    {"dt":"Workflow Action Master","filters":[["module","=","Vaaman Hr"]]},
+    {"dt":"Print Format","filters":[["module","=","Vaaman Hr"]]}
 ]
 # Ensure the function is called during startup
 apply_monkey_patch()
