@@ -1269,21 +1269,16 @@ def get_filtered_historical_paths(date, department=None, branch=None, employee_i
 
     return {"paths": result_paths}
 
-def get_google_access_token():
-    key_file_path = frappe.conf.get("fcm_credentials_path") or frappe.get_site_path("private", "files", "firebase-service-account.json")
-    
-    if not os.path.exists(key_file_path):
-        frappe.log_error("Firebase Service Account JSON file not found.")
-        return None
+def get_gateway_headers():
+    license_key = frappe.conf.get("client_license_key") or "UNKNOWN_LICENSE"
+    return {
+        "Authorization": f"Bearer {license_key}",
+        "Content-Type": "application/json"
+    }
 
-    creds = service_account.Credentials.from_service_account_file(
-        key_file_path,
-        scopes=['https://www.googleapis.com/auth/cloud-platform']
-    )
-
-    transport_request = Request()
-    creds.refresh(transport_request)
-    return creds.token
+def get_fcm_url():
+    hq_url = frappe.conf.get("hq_server_url", "https://hq.octavision.com")
+    return f"{hq_url}/api/method/hq.api.fcm_proxy"
 
 @frappe.whitelist()
 def save_fcm_token(employee, fcm_token):
@@ -1401,22 +1396,8 @@ def check_and_send_shift_reminders():
         if not shifts_to_process:
             return
 
-        access_token = get_google_access_token()
-        if not access_token:
-            return
-        
-
-        try:
-            creds = json.load(open(frappe.conf.get("fcm_credentials_path") or frappe.get_site_path("private", "files", "firebase-service-account.json")))
-            project_id = creds.get("project_id")
-        except:
-            return
-
-        fcm_url = f"https://fcm.googleapis.com/v1/projects/{project_id}/messages:send"
-        headers = {
-            "Authorization": "Bearer " + access_token,
-            "Content-Type": "application/json"
-        }
+        fcm_url = get_fcm_url()
+        headers = get_gateway_headers()
 
 
         target_shifts = list(shifts_to_process.keys())
@@ -1517,24 +1498,9 @@ def send_fcm_notification(doc, method=None):
     3. Handles Single Employee notifications instantly.
     """
     
-    # --- 1. SETUP ---
-    access_token = get_google_access_token()
-    if not access_token:
-        frappe.log_error("FCM Token Error", "Could not get Google Access Token")
-        return
-
-    try:
-        creds = json.load(open(frappe.conf.get("fcm_credentials_path") or frappe.get_site_path("private", "files", "firebase-service-account.json")))
-        project_id = creds.get("project_id")
-    except Exception as e:
-        frappe.log_error("FCM Config Error", str(e))
-        return
-
-    fcm_url = f"https://fcm.googleapis.com/v1/projects/{project_id}/messages:send"
-    headers = {
-        "Authorization": "Bearer " + access_token,
-        "Content-Type": "application/json"
-    }
+    # --- 1. SETUP GATEWAY ---
+    fcm_url = get_fcm_url()
+    headers = get_gateway_headers()
 
     # Common Data
     title = getattr(doc, "title", "New Notification")
