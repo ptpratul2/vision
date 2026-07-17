@@ -1270,7 +1270,7 @@ def get_filtered_historical_paths(date, department=None, branch=None, employee_i
     return {"paths": result_paths}
 
 def get_google_access_token():
-    key_file_path = frappe.get_site_path("private", "files", "firebase-service-account.json")
+    key_file_path = frappe.conf.get("fcm_credentials_path") or frappe.get_site_path("private", "files", "firebase-service-account.json")
     
     if not os.path.exists(key_file_path):
         frappe.log_error("Firebase Service Account JSON file not found.")
@@ -1407,7 +1407,7 @@ def check_and_send_shift_reminders():
         
 
         try:
-            creds = json.load(open(frappe.get_site_path("private", "files", "firebase-service-account.json")))
+            creds = json.load(open(frappe.conf.get("fcm_credentials_path") or frappe.get_site_path("private", "files", "firebase-service-account.json")))
             project_id = creds.get("project_id")
         except:
             return
@@ -1524,7 +1524,7 @@ def send_fcm_notification(doc, method=None):
         return
 
     try:
-        creds = json.load(open(frappe.get_site_path("private", "files", "firebase-service-account.json")))
+        creds = json.load(open(frappe.conf.get("fcm_credentials_path") or frappe.get_site_path("private", "files", "firebase-service-account.json")))
         project_id = creds.get("project_id")
     except Exception as e:
         frappe.log_error("FCM Config Error", str(e))
