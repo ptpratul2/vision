@@ -256,15 +256,15 @@ def get_vaamanhr_settings():
         "employee_features": []  
     }
     
-    original_user = frappe.session.user
+    current_user = frappe.session.user
+    if current_user == "Guest":
+        return response
+
     original_ignore = frappe.flags.ignore_permissions
     frappe.flags.ignore_permissions = True
 
     try:
-        if original_user == "Guest":
-            return response
-
-        employee_id = frappe.db.get_value("Employee", {"user_id": original_user}, "name")
+        employee_id = frappe.db.get_value("Employee", {"user_id": current_user}, "name")
         
         if not employee_id:
             return response
@@ -329,7 +329,7 @@ def get_active_announcements():
         
         for ann in announcements:
             if ann.image:
-                ann.image = f"https://vidhi.vaaman.in{ann.image}"
+                ann.image = f"https://demo.octavision.in{ann.image}"
 
         return announcements
 
