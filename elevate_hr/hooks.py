@@ -152,10 +152,6 @@ override_doctype_class = {
 # }
 
 doc_events = {
-    "*": {
-        "before_insert": "elevate_hr.elevate_hr.kill_switch.license_guard",
-        "before_save": "elevate_hr.elevate_hr.kill_switch.license_guard",
-    },
     "Attendance": {
         "after_insert": "elevate_hr.elevate_hr.half_day_leaves.validate_half_day_attendance"
     },
@@ -227,8 +223,7 @@ doc_events = {
 scheduler_events = {
     "daily": [
         "elevate_hr.late_entry_atten.process_attendance_policy",
-        "elevate_hr.elevate_hr.salery_component_field_add_buttton.update_history",
-        "elevate_hr.elevate_hr.kill_switch.verify_license_with_hq"
+        "elevate_hr.elevate_hr.salery_component_field_add_buttton.update_history"
     ],
     "cron": {
         "*/5 * * * *": [
