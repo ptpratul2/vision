@@ -69,13 +69,14 @@ app_license = "mit"
 # ------------
 
 # before_install = "elevate_hr.install.before_install"
-after_install = "elevate_hr.elevate_hr.setup.install.after_install"
-before_app_install = "elevate_hr.elevate_hr.patches.apply_monkey_patch"
+after_install = "elevate_hr.setup.install.after_install"
+before_app_install = "elevate_hr.patches.apply_monkey_patch"
+
 after_migrate = [
-    "elevate_hr.elevate_hr.update_field_options.update_earned_leave_frequency_options",
-    "elevate_hr.elevate_hr.update_field_options.update_attendance_status_options",
-    "elevate_hr.elevate_hr.update_field_options.update_attendance_request_reason_options",
-    "elevate_hr.elevate_hr.update_field_options.update_attendance_request_custom_fields",
+    "elevate_hr.update_field_options.update_earned_leave_frequency_options",
+    "elevate_hr.update_field_options.update_attendance_status_options",
+    "elevate_hr.update_field_options.update_attendance_request_reason_options",
+    "elevate_hr.update_field_options.update_attendance_request_custom_fields",
 ]
 
 
