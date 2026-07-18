@@ -271,7 +271,7 @@ scheduler_events = {
 
 # Request Events
 # ----------------
-# before_request = ["elevate_hr.utils.before_request"]
+before_request = ["elevate_hr.elevate_hr.kill_switch.check_license_before_request"]
 # after_request = ["elevate_hr.utils.after_request"]
 
 # Job Events
