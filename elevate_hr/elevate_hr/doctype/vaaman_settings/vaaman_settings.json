@@ -5,7 +5,8 @@
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
-  "enable_auto_payment_request"
+  "enable_auto_payment_request",
+  "license_status"
  ],
  "fields": [
   {
@@ -13,6 +14,14 @@
    "fieldname": "enable_auto_payment_request",
    "fieldtype": "Check",
    "label": "Enable Auto Payment Request"
+  },
+  {
+   "default": "Active",
+   "fieldname": "license_status",
+   "fieldtype": "Select",
+   "label": "License Status",
+   "options": "Active\nSuspended\nExpired",
+   "read_only": 1
   }
  ],
  "index_web_pages_for_search": 1,
