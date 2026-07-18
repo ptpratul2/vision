@@ -1,5 +1,24 @@
 import frappe
 
+def check_license_before_request():
+    if not getattr(frappe, "request", None):
+        return
+        
+    # Allow Guest and Administrator to bypass the block
+    if frappe.session.user in ["Guest", "Administrator"]:
+        return
+        
+    # Allow login and logout requests
+    if frappe.request.path.startswith("/api/method/login") or frappe.request.path.startswith("/api/method/logout"):
+        return
+
+    license_status = frappe.db.get_single_value('Vaaman Settings', 'license_status') or 'Active'
+    
+    if license_status != 'Active':
+        frappe.throw(
+            "Access Denied: Your Elevate HR License is expired or inactive. Please contact Octavision HQ for renewal.",
+            title="License Expired"
+        )
 def license_guard(doc, method):
     # Skip for Frappe core doctypes (allow login, user management, etc. to continue)
     if doc.doctype in ['User', 'Error Log', 'Error Snapshot', 'Scheduled Job Log', 'Activity Log', 'Session Default Settings', 'System Settings', 'Role', 'Has Role', 'DocType']:
