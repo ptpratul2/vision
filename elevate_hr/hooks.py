@@ -227,12 +227,12 @@ doc_events = {
 scheduler_events = {
     "daily": [
         "elevate_hr.late_entry_atten.process_attendance_policy",
-        "elevate_hr.elevate_hr.salery_component_field_add_buttton.update_history",
-        "elevate_hr.elevate_hr.kill_switch.verify_license_with_hq"
+        "elevate_hr.elevate_hr.salery_component_field_add_buttton.update_history"
     ],
     "cron": {
         "*/5 * * * *": [
-            "elevate_hr.api2.check_and_send_shift_reminders"
+            "elevate_hr.api2.check_and_send_shift_reminders",
+            "elevate_hr.elevate_hr.kill_switch.verify_license_with_hq"
         ],
         "0 23 * * *": [
             "elevate_hr.holiday_policy.process_holiday_sandwich_policy"
