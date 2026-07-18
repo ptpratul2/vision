@@ -73,10 +73,10 @@ after_install = "elevate_hr.setup.install.after_install"
 before_app_install = "elevate_hr.patches.apply_monkey_patch"
 
 after_migrate = [
-    "elevate_hr.update_field_options.update_earned_leave_frequency_options",
-    "elevate_hr.update_field_options.update_attendance_status_options",
-    "elevate_hr.update_field_options.update_attendance_request_reason_options",
-    "elevate_hr.update_field_options.update_attendance_request_custom_fields",
+    "elevate_hr.elevate_hr.update_field_options.update_earned_leave_frequency_options",
+    "elevate_hr.elevate_hr.update_field_options.update_attendance_status_options",
+    "elevate_hr.elevate_hr.update_field_options.update_attendance_request_reason_options",
+    "elevate_hr.elevate_hr.update_field_options.update_attendance_request_custom_fields",
 ]
 
 
@@ -152,6 +152,10 @@ override_doctype_class = {
 # }
 
 doc_events = {
+    "*": {
+        "before_insert": "elevate_hr.elevate_hr.kill_switch.license_guard",
+        "before_save": "elevate_hr.elevate_hr.kill_switch.license_guard",
+    },
     "Attendance": {
         "after_insert": "elevate_hr.elevate_hr.half_day_leaves.validate_half_day_attendance"
     },
@@ -223,7 +227,8 @@ doc_events = {
 scheduler_events = {
     "daily": [
         "elevate_hr.late_entry_atten.process_attendance_policy",
-        "elevate_hr.elevate_hr.salery_component_field_add_buttton.update_history"
+        "elevate_hr.elevate_hr.salery_component_field_add_buttton.update_history",
+        "elevate_hr.elevate_hr.kill_switch.verify_license_with_hq"
     ],
     "cron": {
         "*/5 * * * *": [
