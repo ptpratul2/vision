@@ -257,7 +257,8 @@ def get_vaamanhr_settings():
     }
     
     original_user = frappe.session.user
-    frappe.set_user("Administrator")
+    original_ignore = frappe.flags.ignore_permissions
+    frappe.flags.ignore_permissions = True
 
     try:
         if original_user == "Guest":
@@ -301,7 +302,7 @@ def get_vaamanhr_settings():
         frappe.log_error(f"VaamanHR API Error: {e}")
     
     finally:
-        frappe.set_user(original_user)
+        frappe.flags.ignore_permissions = original_ignore
 
     return response
 
