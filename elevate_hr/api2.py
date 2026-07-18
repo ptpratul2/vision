@@ -1277,8 +1277,8 @@ def get_gateway_headers():
     }
 
 def get_fcm_url():
-    hq_url = frappe.conf.get("hq_server_url", "https://hq.octavision.com")
-    return f"{hq_url}/api/method/hq.api.fcm_proxy"
+    hq_url = frappe.conf.get("hq_url", "https://cnd.octavision.in")
+    return f"{hq_url}/api/method/octavision_hq.api.fcm_proxy"
 
 @frappe.whitelist()
 def save_fcm_token(employee, fcm_token):
