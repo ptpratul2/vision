@@ -206,21 +206,71 @@ def get_employee_checkin_status(employee):
         "has_checked_in_today": bool(has_checked_in_today)
     }
 
+
+
+
+# @frappe.whitelist()
+# def mark_attendance(employee, log_type, latitude, longitude, custom_outdoor_duty):
+#     if not all([employee, log_type, latitude, longitude]):
+#         frappe.throw("Employee, Log Type, Latitude, and Longitude are required.")
+
+#     last_checkin = frappe.db.get_value(
+#         "Employee Checkin",
+#         {
+#             "employee": employee,
+#             "custom_face_checkin_or_checkout": 1,
+#             "docstatus": 0
+#         },
+#         ["log_type", "time"], 
+#         order_by="time desc",
+#         as_dict=True 
+#     )
+
+#     current_status = determine_status(employee, last_checkin)
+
+#     if current_status == "IN" and log_type == "IN":
+#         frappe.throw(f"Employee {employee} is already checked in.")
+
+#     if current_status == "OUT" and log_type == "OUT":
+#         frappe.throw(f"Employee {employee} must check in before checking out.")
+
+#     checkin = frappe.new_doc("Employee Checkin")
+#     checkin.employee = employee
+#     checkin.log_type = log_type
+#     checkin.time = get_local_now()
+#     checkin.latitude = latitude
+#     checkin.longitude = longitude
+#     checkin.custom_face_checkin_or_checkout = 1
+#     checkin.custom_outdoor_duty = custom_outdoor_duty
+#     checkin.insert()
+
+#     return {"status": "success", "message": f"Successfully {log_type}."}
+
+
+
 @frappe.whitelist()
-def mark_attendance(employee, log_type, latitude, longitude, custom_outdoor_duty):
-    if not all([employee, log_type, latitude, longitude]):
-        frappe.throw("Employee, Log Type, Latitude, and Longitude are required.")
+def mark_attendance(employee, log_type, latitude=None, longitude=None, custom_outdoor_duty=0):
+    # Strictly require all required fields
+    if not employee or not log_type or latitude is None or longitude is None:
+        frappe.throw("Employee, Log Type, Latitude, and Longitude are all strictly required.")
+
+    # Validate and convert coordinates
+    try:
+        lat_val = float(latitude)
+        lon_val = float(longitude)
+    except (ValueError, TypeError):
+        frappe.throw("Invalid GPS coordinates provided.")
 
     last_checkin = frappe.db.get_value(
         "Employee Checkin",
         {
             "employee": employee,
             "custom_face_checkin_or_checkout": 1,
-            "docstatus": 0
+            "docstatus": 0,
         },
-        ["log_type", "time"], 
+        ["log_type", "time"],
         order_by="time desc",
-        as_dict=True 
+        as_dict=True,
     )
 
     current_status = determine_status(employee, last_checkin)
@@ -235,13 +285,84 @@ def mark_attendance(employee, log_type, latitude, longitude, custom_outdoor_duty
     checkin.employee = employee
     checkin.log_type = log_type
     checkin.time = get_local_now()
-    checkin.latitude = latitude
-    checkin.longitude = longitude
+    checkin.latitude = lat_val
+    checkin.longitude = lon_val
     checkin.custom_face_checkin_or_checkout = 1
     checkin.custom_outdoor_duty = custom_outdoor_duty
+
     checkin.insert()
 
-    return {"status": "success", "message": f"Successfully {log_type}."}
+    return {
+        "status": "success",
+        "message": f"Successfully {log_type}.",
+    }
+
+
+
+
+
+# @frappe.whitelist()
+# def get_vaamanhr_settings():
+#     DEFAULT_CUSHION = 180
+#     DEFAULT_APP_VERSION = 1
+
+#     response = {
+#         "shift_end_cushion": DEFAULT_CUSHION,
+#         "app_version": DEFAULT_APP_VERSION,
+#         "branch_features": [],   
+#         "employee_helper": {},
+#         "employee_features": []  
+#     }
+    
+#     current_user = frappe.session.user
+#     if current_user == "Guest":
+#         return response
+
+#     original_ignore = frappe.flags.ignore_permissions
+#     frappe.flags.ignore_permissions = True
+
+#     try:
+#         employee_id = frappe.db.get_value("Employee", {"user_id": current_user}, "name")
+        
+#         if not employee_id:
+#             return response
+
+#         branch = frappe.db.get_value("Employee", employee_id, "branch")
+        
+#         if branch:
+#             settings_name = frappe.db.get_value("VaamanHR Settings", {"branch": branch}, "name")
+            
+#             if settings_name:
+#                 settings_doc = frappe.get_doc("VaamanHR Settings", settings_name)
+                
+#                 response["shift_end_cushion"] = int(settings_doc.shift_end_cushion) if settings_doc.shift_end_cushion is not None else DEFAULT_CUSHION
+#                 response["app_version"] = settings_doc.app_version if settings_doc.app_version else DEFAULT_APP_VERSION
+                
+#                 if hasattr(settings_doc, "given_features"):
+#                     response["branch_features"] = [row.feature for row in settings_doc.given_features if row.feature]
+
+#         helper_name = frappe.db.get_value("Employee Helper", {"employee": employee_id}, "name")
+        
+#         if helper_name:
+#             helper_doc = frappe.get_doc("Employee Helper", helper_name)
+            
+#             response["employee_helper"] = {
+#                 "name": helper_doc.name,
+#                 "fcm_token": helper_doc.fcm_token,
+#                 "face_embeddings": helper_doc.face_embeddings,
+#                 "permission_banner_shown": helper_doc.permission_banner_shown
+#             }
+
+#             if hasattr(helper_doc, "given_features"):
+#                 response["employee_features"] = [row.feature for row in helper_doc.given_features if row.feature]
+
+#     except Exception as e:
+#         frappe.log_error(f"VaamanHR API Error: {e}")
+    
+#     finally:
+#         frappe.flags.ignore_permissions = original_ignore
+
+#     return response
 
 @frappe.whitelist()
 def get_vaamanhr_settings():
@@ -251,11 +372,12 @@ def get_vaamanhr_settings():
     response = {
         "shift_end_cushion": DEFAULT_CUSHION,
         "app_version": DEFAULT_APP_VERSION,
-        "branch_features": [],   
+        "attendance_by": None,  # Branch-level setting
+        "branch_features": [],
         "employee_helper": {},
-        "employee_features": []  
+        "employee_features": [],
     }
-    
+
     current_user = frappe.session.user
     if current_user == "Guest":
         return response
@@ -264,47 +386,84 @@ def get_vaamanhr_settings():
     frappe.flags.ignore_permissions = True
 
     try:
-        employee_id = frappe.db.get_value("Employee", {"user_id": current_user}, "name")
-        
+        employee_id = frappe.db.get_value(
+            "Employee", {"user_id": current_user}, "name"
+        )
+
         if not employee_id:
             return response
 
         branch = frappe.db.get_value("Employee", employee_id, "branch")
-        
-        if branch:
-            settings_name = frappe.db.get_value("VaamanHR Settings", {"branch": branch}, "name")
-            
-            if settings_name:
-                settings_doc = frappe.get_doc("VaamanHR Settings", settings_name)
-                
-                response["shift_end_cushion"] = int(settings_doc.shift_end_cushion) if settings_doc.shift_end_cushion is not None else DEFAULT_CUSHION
-                response["app_version"] = settings_doc.app_version if settings_doc.app_version else DEFAULT_APP_VERSION
-                
-                if hasattr(settings_doc, "given_features"):
-                    response["branch_features"] = [row.feature for row in settings_doc.given_features if row.feature]
 
-        helper_name = frappe.db.get_value("Employee Helper", {"employee": employee_id}, "name")
-        
+        if branch:
+            settings_name = frappe.db.get_value(
+                "VaamanHR Settings",
+                {"branch": branch},
+                "name",
+            )
+
+            if settings_name:
+                settings_doc = frappe.get_doc(
+                    "VaamanHR Settings", settings_name
+                )
+
+                response["shift_end_cushion"] = (
+                    int(settings_doc.shift_end_cushion)
+                    if settings_doc.shift_end_cushion is not None
+                    else DEFAULT_CUSHION
+                )
+
+                response["app_version"] = (
+                    settings_doc.app_version
+                    if settings_doc.app_version
+                    else DEFAULT_APP_VERSION
+                )
+
+                # Branch-level attendance_by
+                response["attendance_by"] = settings_doc.attendance_by
+
+                if hasattr(settings_doc, "given_features"):
+                    response["branch_features"] = [
+                        row.feature
+                        for row in settings_doc.given_features
+                        if row.feature
+                    ]
+
+        helper_name = frappe.db.get_value(
+            "Employee Helper",
+            {"employee": employee_id},
+            "name",
+        )
+
         if helper_name:
             helper_doc = frappe.get_doc("Employee Helper", helper_name)
-            
+
             response["employee_helper"] = {
                 "name": helper_doc.name,
                 "fcm_token": helper_doc.fcm_token,
                 "face_embeddings": helper_doc.face_embeddings,
-                "permission_banner_shown": helper_doc.permission_banner_shown
+                "permission_banner_shown": helper_doc.permission_banner_shown,
+                # Employee-level attendance_by
+                "attendance_by": helper_doc.attendance_by,
             }
 
             if hasattr(helper_doc, "given_features"):
-                response["employee_features"] = [row.feature for row in helper_doc.given_features if row.feature]
+                response["employee_features"] = [
+                    row.feature
+                    for row in helper_doc.given_features
+                    if row.feature
+                ]
 
     except Exception as e:
         frappe.log_error(f"VaamanHR API Error: {e}")
-    
+
     finally:
         frappe.flags.ignore_permissions = original_ignore
 
     return response
+
+
+
 
 
 @frappe.whitelist()
@@ -581,47 +740,56 @@ def update_approval_status(doctype, docname, action, rejection_reason=None):
         frappe.throw(str(e))
     finally:
         frappe.flags.ignore_permissions = False
-
 @frappe.whitelist()
-def log_geofence_event(employee, log_type, latitude, longitude, timestamp): 
-    if not all([employee, log_type, latitude, longitude, timestamp]): 
+def log_geofence_event(employee, log_type, latitude, longitude, timestamp, permission_revoked=0):
+    if not all([employee, log_type, latitude, longitude, timestamp]):
         frappe.throw("Employee, Log Type, Latitude, Longitude, and Timestamp are required.")
-    
-    try:
-        # last_log_type = frappe.db.get_value(
-        #     "Employee Checkin",
-        #     {"employee": employee},
-        #     "log_type",
-        #     order_by="time desc"
-        # )
 
-        # if last_log_type and last_log_type == log_type:
-        #     return {"status": "skipped", "message": "Skipped redundant log; employee is already in this state."}
-        
+    try:
         try:
-            kolkata_tz = pytz.timezone('Asia/Kolkata')
+            kolkata_tz = pytz.timezone("Asia/Kolkata")
             utc_time = get_datetime(timestamp)
             ist_time = utc_time.astimezone(kolkata_tz)
             event_time = ist_time.replace(tzinfo=None)
         except Exception as e:
-            frappe.log_error(f"Could not parse timestamp for geofence event: {timestamp}. Error: {e}", "Geofence Timestamp Error")
-            frappe.throw(f"Invalid timestamp format provided: {timestamp}. Expected ISO 8601 string.")
+            frappe.log_error(
+                f"Could not parse timestamp for geofence event: {timestamp}. Error: {e}",
+                "Geofence Timestamp Error",
+            )
+            frappe.throw(
+                f"Invalid timestamp format provided: {timestamp}. Expected ISO 8601 string."
+            )
 
         checkin = frappe.new_doc("Employee Checkin")
         checkin.employee = employee
         checkin.log_type = log_type
-        checkin.time = event_time  
+        checkin.time = event_time
         checkin.latitude = latitude
         checkin.longitude = longitude
-        checkin.custom_face_checkin_or_checkout = 0  
+        checkin.custom_face_checkin_or_checkout = 0
+        checkin.custom_geofence_in_or_out = 1
+
+        # Catch the permission revoked flag from the frontend
+        checkin.custom_permission_revoked = int(permission_revoked)
+
         checkin.insert(ignore_permissions=True)
 
         frappe.db.commit()
-        return {"status": "success", "message": f"Geofence event '{log_type}' logged successfully."}
-    
+
+        return {
+            "status": "success",
+            "message": f"Geofence event '{log_type}' logged successfully.",
+        }
+
     except Exception as e:
-        frappe.log_error(frappe.get_traceback(), "Geofence Event Logging Failed")
-        frappe.throw(f"An error occurred while logging geofence event: {str(e)}")
+        frappe.log_error(
+            frappe.get_traceback(),
+            "Geofence Event Logging Failed",
+        )
+        frappe.throw(
+            f"An error occurred while logging geofence event: {str(e)}"
+        )
+
 
 @frappe.whitelist()
 def log_geofence_event_batch(employee, events):
@@ -681,6 +849,7 @@ def log_geofence_event_batch(employee, events):
             checkin.latitude = flt(event.get("latitude"))
             checkin.longitude = flt(event.get("longitude"))
             checkin.custom_face_checkin_or_checkout = 0
+            checkin.custom_geofence_in_or_out = 1
             checkin.insert(ignore_permissions=True)
             logged_count += 1
 
@@ -1271,9 +1440,9 @@ def get_filtered_historical_paths(date, department=None, branch=None, employee_i
     return {"paths": result_paths}
 
 def get_gateway_headers():
-    license_key = frappe.conf.get("client_license_key") or "UNKNOWN_LICENSE"
+    license_key = frappe.conf.get("client_license_key") or frappe.conf.get("elevate_hr_licence_key") or "UNKNOWN_LICENSE"
     return {
-        "Authorization": f"Bearer {license_key}",
+        "X-Elevate-License": f"Bearer {license_key}",
         "Content-Type": "application/json"
     }
 
@@ -1587,9 +1756,11 @@ def send_fcm_notification(doc, method=None):
     }
 
     try:
-        requests.post(fcm_url, headers=headers, data=json.dumps(message))
+        resp = requests.post(fcm_url, headers=headers, data=json.dumps(message))
+        if resp.status_code != 200:
+            frappe.log_error("FCM Single Send Error", f"Status: {resp.status_code}\nResponse: {resp.text}")
     except Exception as e:
-        frappe.log_error("FCM Single Send Error", str(e))
+        frappe.log_error("FCM Single Send Exception", str(e))
 
 def send_broadcast_background(users, base_message, fcm_url, headers):
     """
@@ -1608,9 +1779,11 @@ def send_broadcast_background(users, base_message, fcm_url, headers):
             
             if resp.status_code in [400, 404, 410]:
                 tokens_to_remove.append(user.helper_id)
+            elif resp.status_code != 200:
+                frappe.log_error("FCM Broadcast Error", f"Status: {resp.status_code}\nResponse: {resp.text}")
 
-        except:
-            pass
+        except Exception as e:
+            frappe.log_error("FCM Broadcast Exception", str(e))
     
     if tokens_to_remove:
         try:

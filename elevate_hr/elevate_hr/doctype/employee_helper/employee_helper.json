@@ -8,6 +8,7 @@
   "employee",
   "employee_name",
   "given_features",
+  "attendance_by",
   "face_embeddings",
   "fcm_token",
   "permission_banner_shown"
@@ -46,12 +47,18 @@
    "fieldname": "permission_banner_shown",
    "fieldtype": "Check",
    "label": "Permission Banner Shown"
+  },
+  {
+   "fieldname": "attendance_by",
+   "fieldtype": "Select",
+   "label": "Attendance By",
+   "options": "\nEmployee checkin\nEmployee checkin"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-11-25 13:24:02.628292",
+ "modified": "2026-07-23 08:33:13.997458",
  "modified_by": "Administrator",
  "module": "Elevate HR",
  "name": "Employee Helper",
