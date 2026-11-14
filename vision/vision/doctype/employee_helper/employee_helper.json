@@ -1,0 +1,84 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2025-11-25 13:24:02.628292",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "employee",
+  "employee_name",
+  "given_features",
+  "attendance_by",
+  "face_embeddings",
+  "fcm_token",
+  "permission_banner_shown"
+ ],
+ "fields": [
+  {
+   "fieldname": "employee",
+   "fieldtype": "Link",
+   "label": "Employee",
+   "options": "Employee"
+  },
+  {
+   "fetch_from": "employee.employee_name",
+   "fieldname": "employee_name",
+   "fieldtype": "Data",
+   "label": "Employee Name"
+  },
+  {
+   "fieldname": "given_features",
+   "fieldtype": "Table",
+   "label": "Given Features",
+   "options": "Vaaman Features Child"
+  },
+  {
+   "fieldname": "face_embeddings",
+   "fieldtype": "Long Text",
+   "label": "Face Embeddings"
+  },
+  {
+   "fieldname": "fcm_token",
+   "fieldtype": "Text",
+   "label": "FCM Token"
+  },
+  {
+   "default": "0",
+   "fieldname": "permission_banner_shown",
+   "fieldtype": "Check",
+   "label": "Permission Banner Shown"
+  },
+  {
+   "fieldname": "attendance_by",
+   "fieldtype": "Select",
+   "label": "Attendance By",
+   "options": "\nFace and geo\nEmployee checkin"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2026-08-06 08:35:28.643360",
+ "modified_by": "Administrator",
+ "module": "Vision",
+ "name": "Employee Helper",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

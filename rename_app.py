@@ -2,15 +2,15 @@ import os
 import glob
 import shutil
 
-app_dir = "/home/myselfkartikey/Desktop/dev/app/hello/vaaman/elevate_hr"
-old_name = "elevate_hr"
-new_name = "elevate_hr"
+app_dir = "/home/frappe-user/frappe-bench/apps/vision"
+old_name = "vision"
+new_name = "vision"
 
-old_module = "Elevate HR"
-new_module = "Elevate HR"
+old_module = "Vision"
+new_module = "Vision"
 
-old_title = "Elevate HR"
-new_title = "Elevate HR"
+old_title = "Vision"
+new_title = "Vision"
 
 def replace_in_file(filepath):
     try:
