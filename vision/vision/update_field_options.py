@@ -50,6 +50,17 @@ def update_attendance_request_custom_fields():
     })
 
 
+def update_employee_checkin_custom_fields():
+    create_custom_field_if_not_exists("Employee Checkin", {
+        "fieldname": "custom_outdoor_duty",
+        "label": "Outdoor Duty",
+        "fieldtype": "Check",
+        "insert_after": "longitude",
+        "default": "0",
+        "module": "Vision",
+    })
+
+
 def update_attendance_status_options():
     set_select_options(
         "Attendance",

@@ -270,5 +270,17 @@
   "label": "Employee Weekly Off Days",
   "insert_after": "standard_weekly_off",
   "__islocal": 1
+ },
+ {
+  "doctype": "Custom Field",
+  "dt": "Employee Checkin",
+  "module": "Vision",
+  "name": "Employee Checkin-custom_outdoor_duty",
+  "fieldname": "custom_outdoor_duty",
+  "fieldtype": "Check",
+  "label": "Outdoor Duty",
+  "insert_after": "longitude",
+  "default": "0",
+  "__islocal": 1
  }
 ]

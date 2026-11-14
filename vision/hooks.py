@@ -77,6 +77,7 @@ after_migrate = [
     "vision.vision.update_field_options.update_attendance_status_options",
     "vision.vision.update_field_options.update_attendance_request_reason_options",
     "vision.vision.update_field_options.update_attendance_request_custom_fields",
+    "vision.vision.update_field_options.update_employee_checkin_custom_fields",
 ]
 
 
