@@ -282,5 +282,29 @@
   "insert_after": "longitude",
   "default": "0",
   "__islocal": 1
+ },
+ {
+  "doctype": "Custom Field",
+  "dt": "Employee",
+  "module": "Vision",
+  "name": "Employee-custom_branch_unit",
+  "fieldname": "custom_branch_unit",
+  "fieldtype": "Link",
+  "label": "Branch Unit",
+  "options": "Branch Unit",
+  "insert_after": "company",
+  "__islocal": 1
+ },
+ {
+  "doctype": "Custom Field",
+  "dt": "Employee Checkin",
+  "module": "Vision",
+  "name": "Employee Checkin-custom_face_checkin_or_checkout",
+  "fieldname": "custom_face_checkin_or_checkout",
+  "fieldtype": "Check",
+  "label": "Face Checkin Or Checkout",
+  "insert_after": "employee",
+  "default": "0",
+  "__islocal": 1
  }
 ]

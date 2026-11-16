@@ -4,6 +4,8 @@ def after_install():
     print("Running Vision after_install setup...")
     setup_domains()
     create_default_leave_types()
+    from vision.vision.update_field_options import update_employee_checkin_custom_fields
+    update_employee_checkin_custom_fields()
     print("Vision setup complete.")
 
 def setup_domains():

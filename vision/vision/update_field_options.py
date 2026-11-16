@@ -52,11 +52,30 @@ def update_attendance_request_custom_fields():
 
 def update_employee_checkin_custom_fields():
     create_custom_field_if_not_exists("Employee Checkin", {
+        "name": "Employee Checkin-custom_outdoor_duty",
         "fieldname": "custom_outdoor_duty",
         "label": "Outdoor Duty",
         "fieldtype": "Check",
         "insert_after": "longitude",
         "default": "0",
+        "module": "Vision",
+    })
+    create_custom_field_if_not_exists("Employee Checkin", {
+        "name": "Employee Checkin-custom_face_checkin_or_checkout",
+        "fieldname": "custom_face_checkin_or_checkout",
+        "label": "Face Checkin Or Checkout",
+        "fieldtype": "Check",
+        "insert_after": "employee",
+        "default": "0",
+        "module": "Vision",
+    })
+    create_custom_field_if_not_exists("Employee", {
+        "name": "Employee-custom_branch_unit",
+        "fieldname": "custom_branch_unit",
+        "label": "Branch Unit",
+        "fieldtype": "Link",
+        "options": "Branch Unit",
+        "insert_after": "company",
         "module": "Vision",
     })
 
