@@ -1471,7 +1471,7 @@ def get_filtered_historical_paths(date, department=None, branch=None, employee_i
             ["timestamp", "between", [overall_start, overall_end]],
             ["accuracy", "<=", 60],  # ✅ Only display-quality points on map
         ],
-        fields=["employee", "latitude", "longitude", "timestamp", "branch_unit", "custom_accuracy"],
+        fields=["employee", "latitude", "longitude", "timestamp", "branch_unit", "accuracy"],
         order_by="employee, timestamp asc"
     )
 

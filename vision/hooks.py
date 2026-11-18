@@ -78,6 +78,7 @@ after_migrate = [
     "vision.vision.update_field_options.update_attendance_request_reason_options",
     "vision.vision.update_field_options.update_attendance_request_custom_fields",
     "vision.vision.update_field_options.update_employee_checkin_custom_fields",
+    "vision.vision.update_field_options.update_employee_custom_fields",
 ]
 
 
@@ -153,10 +154,6 @@ override_doctype_class = {
 # }
 
 doc_events = {
-    "*": {
-        "before_insert": "vision.vision.kill_switch.license_guard",
-        "before_save": "vision.vision.kill_switch.license_guard",
-    },
     "Attendance": {
         "after_insert": "vision.vision.half_day_leaves.validate_half_day_attendance"
     },
@@ -231,10 +228,6 @@ scheduler_events = {
         "vision.vision.salery_component_field_add_buttton.update_history"
     ],
     "cron": {
-        # "*/5 * * * *": [
-        #     "vision.api2.check_and_send_shift_reminders",
-        #     "vision.vision.kill_switch.verify_license_with_hq"
-        # ],
         "0 23 * * *": [
             "vision.holiday_policy.process_holiday_sandwich_policy"
         ]
@@ -272,7 +265,7 @@ scheduler_events = {
 
 # Request Events
 # ----------------
-before_request = ["vision.vision.kill_switch.check_license_before_request"]
+# before_request = ["vision.utils.before_request"]
 # after_request = ["vision.utils.after_request"]
 
 # Job Events
@@ -320,14 +313,62 @@ before_request = ["vision.vision.kill_switch.check_license_before_request"]
 
 #custom_field_add
 fixtures = [
-    {"dt":"Custom Field","filters":[["module","=","Vision"]]},
-    {"dt":"Property Setter","filters":[["module","=","Vision"]]},
-    {"dt":"Client Script","filters":[["module","=","Vision"]]},
-    {"dt":"Server Script","filters":[["module","=","Vision"]]},
-    {"dt":"Workflow","filters":[["module","=","Vision"]]},
-    {"dt":"Workflow State","filters":[["module","=","Vision"]]},
-    {"dt":"Workflow Action Master","filters":[["module","=","Vision"]]},
-    {"dt":"Print Format","filters":[["module","=","Vision"]]}
+    {
+        "dt": "Custom Field",
+        "filters": [
+            [
+                "name",
+                "in",
+                [
+                    "Attendance Request-custom_attendance_request_status",
+                    "Attendance Request-custom_mark_absent",
+                    "Attendance-attendance-type",
+                    "Attendance-branch",
+                    "Attendance-holiday-list",
+                    "Attendance-leave_allocation",
+                    "Attendance-over-time",
+                    "Compensatory Leave Request-custom_comp_leave_req_status",
+                    "Employee Checkin-custom_face_checkin_or_checkout",
+                    "Employee Checkin-custom_geofence_in_or_out",
+                    "Employee Checkin-custom_health_flag",
+                    "Employee Checkin-custom_outdoor_duty",
+                    "Employee Checkin-custom_permission_revoked",
+                    "Employee-total-overtime-hours",
+                    "Expense Claim Detail-custom_attachment",
+                    "Expense Claim-custom_rejection_reason",
+                    "Salary Slip-custom_employee_weekly_off_days",
+                    "Salary Slip-custom_paid_leaves",
+                    "Salary Slip-custom_pph",
+                    "Salary Slip-custom_public_holiday",
+                    "Salary Slip-custom_rounded_gross_pay",
+                    "Salary Structure Assignment-custom_current_month_joining",
+                    "Salary Structure Assignment-custom_pf_on_basic",
+                    "Salary Structure Assignment-custom_pf_on_gross",
+                    "Salary Structure Assignment-custom_restricted_pf",
+                    "Salary Structure Assignment-mark_absent_on_public_holiday",
+                    "salary-sal-weekoff",
+                    "Salary-Standard-Weekly-Off",
+                    "Salary-Structure-Assignment-override-weekly-off-with-absent",
+                    "Salary-Structure-weekly-off-on-attendance",
+                    "salary-total-weekly-off",
+                ],
+            ]
+        ],
+    },
+    {
+        "dt": "Property Setter",
+        "filters": [
+            [
+                "name",
+                "in",
+                [
+                    "Attendance Request-reason-options",
+                    "Attendance-status-options",
+                    "Leave Type-earned_leave_frequency-options",
+                ],
+            ]
+        ],
+    },
 ]
 # Ensure the function is called during startup
 apply_monkey_patch()

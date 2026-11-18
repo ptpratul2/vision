@@ -11,7 +11,8 @@
   "longitude",
   "branch_unit",
   "map",
-  "accuracy"
+  "accuracy",
+  "custom_activity"
  ],
  "fields": [
   {
@@ -52,6 +53,11 @@
    "fieldname": "accuracy",
    "fieldtype": "Float",
    "label": "Accuracy"
+  },
+  {
+   "fieldname": "custom_activity",
+   "fieldtype": "Data",
+   "label": "Activity"
   }
  ],
  "grid_page_length": 50,

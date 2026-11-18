@@ -1,0 +1,50 @@
+[
+ {
+  "default_value": null,
+  "doc_type": "Leave Type",
+  "docstatus": 0,
+  "doctype": "Property Setter",
+  "doctype_or_field": "DocField",
+  "field_name": "earned_leave_frequency",
+  "is_system_generated": 1,
+  "modified": "2026-11-18 13:04:17.458720",
+  "module": null,
+  "name": "Leave Type-earned_leave_frequency-options",
+  "property": "options",
+  "property_type": "Text",
+  "row_name": null,
+  "value": "Monthly\nQuarterly\nHalf-Yearly\nYearly\n20 Days"
+ },
+ {
+  "default_value": null,
+  "doc_type": "Attendance",
+  "docstatus": 0,
+  "doctype": "Property Setter",
+  "doctype_or_field": "DocField",
+  "field_name": "status",
+  "is_system_generated": 1,
+  "modified": "2026-11-18 13:04:17.519630",
+  "module": null,
+  "name": "Attendance-status-options",
+  "property": "options",
+  "property_type": "Text",
+  "row_name": null,
+  "value": "Present\nAbsent\nOn Leave\nHalf Day\nWork From Home\nWeekly Off\nHoliday"
+ },
+ {
+  "default_value": null,
+  "doc_type": "Attendance Request",
+  "docstatus": 0,
+  "doctype": "Property Setter",
+  "doctype_or_field": "DocField",
+  "field_name": "reason",
+  "is_system_generated": 1,
+  "modified": "2026-11-18 13:04:17.572271",
+  "module": null,
+  "name": "Attendance Request-reason-options",
+  "property": "options",
+  "property_type": "Text",
+  "row_name": null,
+  "value": "Work From Home\nOn Duty\nOutdoor Duty\nWeekly Off\nSystem Error\nGatepass in Process"
+ }
+]
